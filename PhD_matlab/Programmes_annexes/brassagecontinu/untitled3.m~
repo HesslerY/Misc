@@ -1,0 +1,41 @@
+clear all
+close all
+
+load SR360_3000MHZ_360.mat
+theta=1:360;
+
+%Amplitude_crete=sin(theta/16.7).^4;
+thetai = .1:0.1:360;
+Ampi=interp1(theta,Amplitude_crete,thetai,'spline'); 
+%SR=(Ampi/mean(Ampi)).^2;
+SR=(Ampi/mean(Ampi)).^2;
+
+for k=1:100%valeur vraie:
+for j=1:1000
+tv=sum(SR)/length(SR);
+
+N=k;
+
+%grid
+START=randi(length(SR));
+for i=1:N
+    Q(i)=SR(mod(START+i*round((length(SR)/N)),length(SR))+1);
+end
+tg=sum(Q)/N;
+
+%MCI
+ posirand=sort(randi(length(SR),N,1));
+ for i=1:N
+    P(i)=SR(posirand(i));
+end
+ 
+ tmc=sum(P)/N;
+ 
+ 
+ errtg(j)=abs(tv-tg)/tv;
+ errtmc(j)=abs(tv-tmc)/tv;
+end
+
+merrg(k)=mean(errtg);
+merrmc(k)=mean(errtmc);
+end

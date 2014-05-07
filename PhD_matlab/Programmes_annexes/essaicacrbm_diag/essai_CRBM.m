@@ -1,0 +1,95 @@
+%Example.m sample program
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                               %
+%       CHANNEL IMPULSE RESPONSE, PULSED SIGNAL RESPONSE        %
+%                    & FREQUENCY RESPONSE                       %
+%        by E. Amador (emmanuel.amador@insa-rennes.fr)          %
+%                         IETR/DGA                              %
+%                                                               %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+clear all
+close all
+tic
+global Lt c R POS
+
+
+
+c = 299792458;%
+Lt = 6e-6; %Time-window length in seconds
+nbre_elements = 1; %number of radiating elements
+dmax = c*Lt; %maximal distance
+CONVomni=[];
+CONVant=[];
+
+ load antenneD5n5.mat
+%  load antenneD5n5.mat
+%  load antenneD10n5.mat
+%  load antenne10dB.mat
+   
+for uuu=1:150  
+ 
+    filename=sprintf('CRBMCIR6mu_%d.mat',uuu)
+    load(filename)
+
+
+    %    disp([num2str(ang),'/50'])
+    alp=pi*rand;
+    bet=2*pi*rand; 
+
+    
+    %Pulsed signal
+    tau = Lt; %length of the pulse in seconds
+    f0 = 1e9; %monochromatic pulse frequency
+    
+    N = round(10*Lt*f0); %number of points for the chosen time-window (Lt)
+    tt = 0:Lt/(N-1):Lt; %time scale
+    x = 0:1/((N-1)/Lt):tau;
+    s = sin(2*pi*f0*x); %pulsed signal
+    
+fr = fres(mod(pi/2-elev-alp,pi), mod(pi-azim-bet,2*pi), n, xa, ya, za, Ia);
+fa = fantres(fr,mod(pi/2-elev-alp,pi),mod(pi-azim-bet,2*pi), S);
+
+ 
+    clear fr
+    
+    clear azim elev
+ 
+    Signalx=Sx.*fa;
+    Signaly=Sy.*fa;
+    Signalz=Sz.*fa;
+    
+    clear fa
+    
+    Snx=zeros(1,N);
+    Sny=zeros(1,N);
+    Snz=zeros(1,N);
+    Snxa=zeros(1,N);
+    Snya=zeros(1,N);
+    Snza=zeros(1,N);
+    zn=round((N-1)*t./Lt);
+    
+    for j=1:1:length(Signalz)
+        if zn(j)<N+1
+            Snx(zn(j))=Snx(zn(j))+Sx(j);
+            Sny(zn(j))=Sny(zn(j))+Sy(j);
+            Snz(zn(j))=Snz(zn(j))+Sz(j);
+            
+            Snxa(zn(j))=Snxa(zn(j))+Signalx(j);
+            Snya(zn(j))=Snya(zn(j))+Signaly(j);
+            Snza(zn(j))=Snza(zn(j))+Signalz(j);
+        end
+    end
+ Sigomni=Snx*cos(bet)*sin(alp)+Sny*sin(bet)*sin(alp)+Snz*cos(alp);
+ Siga=Snxa*cos(bet)*sin(alp)+Snya*sin(bet)*sin(alp)+Snza*cos(alp);
+
+    sigomni=conv(s,Sigomni);
+    sigantenne=conv(s,Siga);
+
+CONVomni=[CONVomni;sigomni(1:N)];
+CONVant=[CONVant;sigantenne(1:N)];
+    alpm(uuu)=alp;
+    betm(uuu)=bet;
+    toc
+end
+save('essaiCRBMD1n5.mat','tt','CONVomni','CONVant','alpm','betm');

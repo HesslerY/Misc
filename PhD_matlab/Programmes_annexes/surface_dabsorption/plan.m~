@@ -1,0 +1,52 @@
+%pyramides
+clear all
+close all
+
+h=0.035;
+H=.45
+L=.60
+W=.60
+N=4
+M=4
+dN=L/(8*N)
+dM=W/(8*M)
+P=h*ones(N*8+1,M*8+1);
+
+x=1:8*N+1
+y=1:8*M+1
+
+
+fig=figure(1)
+axes1 = axes('Visible','off','Parent',fig,...
+    'DataAspectRatio',[1 1 1],...
+    'CameraViewAngle',2.64522913471741);
+
+surf(-L/2:dN:L/2,-W/2:dM:W/2,P,'Parent',axes1,'Tag','meshz',...
+    'EdgeLighting','flat',...
+    'FaceLighting','none',...
+    'FaceColor',[0 0 0]);
+
+axis equal
+axis vis3d
+axis off
+
+    xlim([-.8,.8])
+    ylim([-.8,.8])
+    zlim([0,.8])
+Ap=[];
+i=0;
+    for theta=-90:0;
+        for phi=0:1:359
+            view(phi,theta)
+            getframe;
+            filename=sprintf('fig%d.bmp',i);
+            saveas(fig,filename,'bmpmono')
+            importfile(filename)
+            Ap=[Ap;theta phi sum(sum(cdata))/3];
+            delete(filename)
+            %       close all
+            i=i+1;
+        end
+        
+    end
+     save('plan.mat','Ap')

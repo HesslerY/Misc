@@ -1,0 +1,31 @@
+for i=1:101
+    imagesc(lamb,NN(:,1,1),tempsrand(:,:,i))
+    Colorbar;
+    %caxis([0 100])
+    title([num2str(Crit(1,i,1)),' dB'])
+    getframe;
+
+end
+    
+
+for i=1:101
+A=effrand(:,100,i);
+B=tempsrand(:,100,i)*360/90;
+plotyy(1:100,A(:),1:100,B(:))
+title([num2str(Crit(1,i,1)),' dB'])
+grid on
+getframe;
+pause(.2)
+end
+
+
+
+for i=1:101
+A=effrand(50,:,i);
+B=tempsrand(50,:,i)*360/90;
+plotyy(lamb,filter(ones(10,1)/10,1,A(:)),lamb,filter(ones(10,1)/10,1,B(:)))
+title([num2str(Crit(1,i,1)),' dB'])
+grid on
+getframe;
+pause(.2)
+end

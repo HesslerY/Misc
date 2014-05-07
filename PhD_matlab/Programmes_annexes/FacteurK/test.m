@@ -1,0 +1,86 @@
+clear
+tic
+K=[];
+V2=[];
+Kfinal=[];
+sigma=.08;
+N=30; %position de brasseur
+Nfreq=100; %nombre de fréquences
+Nexp=10000; %nombre d'expérience de la simulation de MC
+a=0;
+K=-40:1:30;
+f0=1e9;
+v2=2*sigma^2*10.^(K/10);
+a=0
+for f=1:1:length(v2);
+    a=a+1;
+    if mod(round(a/length(v2)*500000),10)==0
+        disp(a/length(v2)*100)
+    end
+    
+    %Génération du S21
+    Sr=sigma*(randn(N,Nfreq,Nexp))+(sqrt(v2(f)))*cos(45);
+    Si=sigma*(randn(N,Nfreq,Nexp))+(sqrt(v2(f)))*sin(45);
+
+    %moyenne sur les positions de brasseur
+    mr=mean(Sr,1).^2;
+    mi=mean(Si,1).^2;
+
+
+    vv=(mr+mi); %v^2
+
+    ss=(var(Sr,0,1)+var(Si,0,1));
+    ss10=(var(Sr,0,1)+var(Si,0,1))*10/9;
+    ss20=(var(Sr,0,1)+var(Si,0,1))*20/19;
+    ss30=(var(Sr,0,1)+var(Si,0,1))*30/29;
+    ss40=(var(Sr,0,1)+var(Si,0,1))*40/39;
+    ss50=(var(Sr,0,1)+var(Si,0,1))*50/49;
+    %2*sigma^2
+    %ss=2*0.08^2; %sigma déterministe
+
+    %moyenne sur les fréquences
+    k=mean(vv./ss,2)-1/N;
+    k10=mean(vv./ss10,2)-1/N;
+    k20=mean(vv./ss20,2)-1/N;
+    k30=mean(vv./ss30,2)-1/N;
+    k40=mean(vv./ss40,2)-1/N;
+    k50=mean(vv./ss50,2)-1/N;
+    %moyenne sur les expériences (lissage de Monte Carlo)
+    kmoy=mean(k,3);
+    kmoy10=mean(k10,3);
+    kmoy20=mean(k20,3);
+    kmoy30=mean(k30,3);
+    kmoy40=mean(k40,3);
+    kmoy50=mean(k50,3);
+
+    min95=prctile(k,5);
+    max95=prctile(k,95);
+
+    Kfinal=[Kfinal;kmoy kmoy10 kmoy20 kmoy30 kmoy40 kmoy50 min95 max95];
+end
+
+
+figure(1)
+hold on
+plot(K,K,'k')
+plot(K,10*log10(Kfinal(:,1)),'b')
+plot(K,10*log10(Kfinal(:,2)),'g')
+plot(K,10*log10(Kfinal(:,3)),'r')
+plot(K,10*log10(Kfinal(:,4)),'m')
+plot(K,10*log10(Kfinal(:,5)),'c')
+plot(K,10*log10(Kfinal(:,6)),'y')
+
+%plot(K,10*log10(Kfinal(:,1)),'b')
+
+%plot(K,10*log10(Kfinal(:,2)),'g')
+%plot(K,10*log10(Kfinal(:,3)),'g')
+legend('K vrai','Pas de correction','10','20','30','40','50')%,'Intervalle de confiance analytique')
+title(['K-factor estimation for ',num2str(N),' stirrer positions, ',num2str(Nfreq),' frequencies and ',num2str(Nexp), ' Monte Carlo experiments'])
+xlabel('K')
+axis equal
+ylabel('K estime')
+grid on
+hold off
+toc
+
+

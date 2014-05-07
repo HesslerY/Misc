@@ -1,0 +1,40 @@
+%modèle ondes planes
+clear all
+N=100;
+
+M=360*25;
+SR=[];
+R=3;
+uuu=0;
+for lambda=.01:.01:1%:.001:.05
+uuu=uuu+1;
+    disp(lambda)
+theta=2*pi/M:2*pi/M:2*pi; %position des mesures
+
+Xm=R*cos(theta);
+Ym=R*sin(theta);
+Zm=zeros(1,M);%1000/M:1000/M:1000;
+
+A=randn(1,N)+1i*randn(1,N);
+th=2*pi*rand(1,N);
+
+l=10;
+
+X=l*rand(1,N);
+Y=l*rand(1,N);
+Z=l*rand(1,N);
+
+
+for i=1:N
+dist=sqrt((X(i)-Xm).^2+(Y(i)-Ym).^2+(Z(i)-Zm).^2);
+E(i,:)=A(i)*exp(-1i*(th(i)+2*pi*dist)/lambda);
+end
+lamb(uuu)=lambda;
+SR(uuu,:)=abs(sum(E));
+ %P=(SR.^2/mean(SR.^2));
+ %plot(theta,10*log10(P));
+end
+save('SRopldiff.mat','SR','lamb','theta')
+
+%dfittool(P)
+

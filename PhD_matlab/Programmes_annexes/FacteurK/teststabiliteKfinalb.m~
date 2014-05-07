@@ -1,0 +1,82 @@
+clear
+tic
+K=[];
+V=[];
+Kfinal=[];
+sigma=0.08;
+
+Nexp=1000;
+N=100;
+KdB=-40:.5:20;
+a=0
+for f=10.^(KdB/20)*sigma*sqrt2;
+	a=a+1;
+	     if mod(round(a/length(KdB)*100),10)==0
+         	disp(a/length(KdB)*100)
+     end
+    v=f;
+    
+
+    
+    S=(complex(sigma*randn(Nexp,N),sigma*randn(Nexp,N)+(v)));
+
+    %function param_rice(R,frequ)
+    Ri=S';
+    KK=[];
+    DSR=[];
+    ssigma=[];
+    vv=[];
+    v=[];
+    p=1;
+    Z=[];
+    theta=[];
+    thetas=[];
+    thetat=[];
+
+    for k=1:1:length(Ri(1,:))
+
+        [mu,si]=normfit(real(Ri(:,k)));
+        [mm,ss]=normfit(imag(Ri(:,k)));
+        temp=sqrt(mu^2+mm^2);
+
+        ssigma=[ssigma;(si+ss)/2];
+        vv=[vv;sqrt(mu^2+mm^2)];
+        theta(k)=atan2(mm,mu);
+        %Z=[Z;complex(mu,mm)];
+
+    end
+
+%K=[K;f/sigma/sqrt(2)];
+V=[V vv];
+
+end
+
+ for i=1:1:length(V(1,:))
+     moy=mean(V(:,i));
+     sig=std(V(:,i));
+
+  
+    Kfinal=[Kfinal;20*log10(moy/sqrt(2)/sigma)];
+ end
+%load ResultN100-10000.mat
+%  figure,
+% plot(20*log10(K),20*log10(Vfinal(:,5)),20*log10(K),20*log10(Vfinal(:,6)))
+figure,
+hold on
+%plot(20*log10(K/2),20*log10(Vfinal(:,5)),20*log10(K/2),20*log10(Vfinal(:,6)),20*log10(K/2),20*log10(Vfinal(:,1)/sigma),20*log10(K/2),20*log10(K/2))
+plot(KdB,KdB)
+plot(KdB,Kfinal)
+%plot(20*log10(Result(:,1)),20*log10(Result(:,2)),'bo')
+xlabel('K')
+ylabel('K estime')
+grid on
+% 
+% figure,
+% plot(10*log10(K),Kfinal(:,4))
+
+save K100b.mat 'Kfinal'
+     
+
+
+
+    toc

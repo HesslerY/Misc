@@ -1,0 +1,95 @@
+load resrho_1v90expo_1.mat
+
+figure(1)
+imagesc(10:-0.1:0,3*flipud(lamb'),result)
+title('Detection de defaut')
+xlabel('$P/P_0$ en dB')
+ylabel('$\lambda$')
+colormap(gray)
+colorbar
+axis equal
+axis tight
+
+
+figure(2)
+imagesc(10:-0.1:0,3*flipud(lamb'),tempsessaisansNAN)
+caxis([0 90])
+title('(b) Temps de lessai')
+xlabel('$P/P_0$ en dB')
+ylabel('$\lambda$')
+colorbar
+axis equal
+axis tight
+
+figure(3)
+imagesc(10:-0.1:0,3*flipud(lamb'),texpomoyen)
+caxis([0 3])
+title('(c) Temps dexposition moyen')
+xlabel('$P/P_0$ en dB')
+ylabel('$\lambda$')
+colorbar
+axis equal
+axis tight
+
+figure(4)
+imagesc(10:-0.1:0,3*flipud(lamb'),texpomax)
+caxis([0 5])
+title('(d) Temps dexposition maximal')
+xlabel('$P/P_0$ en dB')
+ylabel('$\lambda$')
+colorbar
+axis equal
+axis tight
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+[X,Y]=meshgrid(0:0.1:10,lamb*3)
+
+figure(1)
+contourf(X,Y,result',2)
+title('Detection de defaut')
+xlabel('$P/P_0$ en dB')
+ylabel('$\lambda$')
+caxis([0 1])
+colormap(gray)
+colorbar
+axis equal
+axis tight
+
+
+figure(2)
+contourf(X,Y,filter2(ones(100,10)/(100*sqrt(2)),tempsessai'),10)
+caxis([0 90])
+title('(b) Temps de lessai')
+xlabel('$P/P_0$ en dB')
+ylabel('$\lambda$')
+colorbar
+axis equal
+axis tight
+
+figure(3)
+contourf(X,Y,filter2(ones(100,10)/(100*sqrt(2)),texpomoyen'),10)
+caxis([0 3])
+title('(c) Temps dexposition moyen')
+xlabel('$P/P_0$ en dB')
+ylabel('$\lambda$')
+colorbar
+axis equal
+axis tight
+
+figure(4)
+contourf(X,Y,texpomax',10)
+caxis([0 5])
+title('(d) Temps dexposition maximal')
+xlabel('$P/P_0$ en dB')
+ylabel('$\lambda$')
+colorbar
+axis equal
+axis tight
+
+
+
+A=texpomax(71,:)
+plot(3e8./3*lamb,filter(ones(1,10)/10,1,A))

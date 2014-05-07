@@ -1,0 +1,57 @@
+clear
+tic
+K=[];
+V2=[];
+Nexp=1000;
+Kfinal50100=[];
+Kfinal501=[];
+sigma=.08;
+N=100; %position de brasseur
+Nfreq=1; %nombre de fréquences
+ %nombre d'expérience de la simulation de MC
+a=0;
+K=-40:1:30;
+f0=1e9;
+v2=2*sigma^2*10.^(K/10);
+a=0
+for f=1:1:length(v2);
+    a=a+1;
+    if mod(round(a/length(v2)*500000),10)==0
+        disp(a/length(v2)*100)
+    end
+    
+    %Génération du S21
+    Sr=sigma*(randn(N,Nfreq,Nexp))+(sqrt(v2(f)))*cos(45);
+    Si=sigma*(randn(N,Nfreq,Nexp))+(sqrt(v2(f)))*sin(45);
+
+    
+end
+
+
+S=abs(complex(Sr,Si));
+
+SN=[];
+
+D=[];%matrice des valeurs de d
+M=0;
+for f=1:1:length(S(:,1)) %Boucle sur les fr�quences
+    R=abs(S(f,:)); % on prend le module des valeurs de la fr�quence consid�r�e
+    
+    b=raylfit(R); %on r�cup�re les param�tres b
+    y=sort(R);
+    p = raylcdf(y,b); %cdf th�orique pour les valeurs g�n�r�es
+
+    
+        SN=1/(length(R)):1/(length(R)):1;
+
+    D=abs(p-SN);
+    d=max(D); %calcul de l'ecart maximal
+    N=length(R);
+    if ((d-0.2/N)*(sqrt(N)+0.26+0.5/sqrt(N)))<1.094 %test, valeurs critiques de stephens
+        M=M+1; %increment
+    else
+        %        POURRI=[POURRI;frequencesf(f)];
+    end
+end
+
+RR=1-M/length(S(:,1)) %proportion de r�ussite

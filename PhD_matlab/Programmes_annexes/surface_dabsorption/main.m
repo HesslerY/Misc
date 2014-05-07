@@ -1,0 +1,5 @@
+%sol
+%debout
+%coin
+arrete
+

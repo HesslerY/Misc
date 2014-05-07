@@ -1,0 +1,38 @@
+%diag al�atoire
+
+%function main()
+
+clear all;
+close all;
+
+nt = 100;
+np = 191;
+
+theta2 = linspace(0, pi, nt);
+phi2 = linspace(0, 2*pi, np);
+[theta, phi] = meshgrid(theta2, phi2);
+
+D=1% taille du syst�me en lambda
+
+%TELECHARGER LE PROG DOLPH
+
+n =5;
+dx=0.25
+x = 1:dx:dx*n+1;%D*rand(n,1);
+y = ones(1,n);%D*rand(n,1);
+z = ones(1,n);%D*rand(n,1);
+
+[I, dph] = dolph3(type, d, N, R)
+
+%I = [0.9628+1i*0.2701;-4.1837-1i*0.8703;9.8866+1i*1.3603;-15.8051-1i*1.0822;18.3655;-15.8051+1i*1.0822;9.8866-1i*1.3603;-4.1837+1i*0.8703;0.9628-1i*0.2701]
+
+S = 4;
+
+fr = fres(theta, phi, n, x, y, z, I);
+
+fa = fantres(fr, theta, phi, S);
+
+d1 = Directivite(fa, theta, phi)
+
+
+tracediag(fa,theta, phi);

@@ -1,0 +1,34 @@
+%diag al�atoire
+
+%function main()
+
+clear all;
+close all;
+
+nt = 100;
+np = 191;
+
+theta2 = linspace(0, pi, nt);
+phi2 = linspace(0, 2*pi, np);
+[theta, phi] = meshgrid(theta2, phi2);
+
+D=3% taille du syst�me en lambda
+
+n = 5;
+x = D*rand(n,1);
+y = D*rand(n,1);
+z = D*rand(n,1);
+I = complex(rand(n,1),rand(n,1));
+
+
+
+S = 2;
+
+fr = fres(theta, phi, n, x, y, z, I);
+
+fa = fantres(fr, theta, phi, S);
+
+d1 = Directivite(fa, theta, phi);
+
+
+tracediag(fa,theta, phi);

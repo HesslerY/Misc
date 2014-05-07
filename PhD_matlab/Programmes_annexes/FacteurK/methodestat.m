@@ -1,0 +1,56 @@
+clear
+Result=[];
+RICE=[];
+ParamV=[];
+s=0.08;
+dim=50;
+Nexp=100
+for v=0:0.005:4
+
+    x = s .* randn(dim,1) + v;
+    y = s .* randn(dim,1);
+    r = sqrt(x.^2 + y.^2);
+
+
+    RICE=[RICE r];
+    ParamV=[ParamV;v];
+end
+tic
+alpha=45;
+for u=0:0.01:4*s
+    u
+    RR1=[];
+    for k=1:1:50
+
+        a=(100*k/50);
+        if mod(a,20)==0
+            disp(a)
+        end
+
+        v=abs(complex(0.0339268*randn(dim,Nexp)+u*sind(45),0.0339268*randn(dim,Nexp)+u*cosd(45)));
+        sigma=0.0085*randn(dim,Nexp)+0.08;
+        S=abs(complex(sigma.*randn(dim,Nexp)+(v*cosd(45)),sigma.*randn(dim,Nexp)+(v*sind(45))));
+        N=length(S(1,:)); %posiiton de brasseur ou nombre d'�chantillons
+
+        %POURRI=[]; %matrice qui r�cup�re les fr�quences ou le test �choue
+        D=[];%matrice des valeurs de d
+        M=0;
+        for f=1:1:length(S(:,1)) %Boucle sur les fr�quences
+            R=abs(S(f,:)); % on prend le module des valeurs de la fr�quence consid�r�e
+            for j=1:1:length(RICE(1,:))
+                [Verdict(f,j), PROB(f,j)]=kstest2(R,RICE(:,j));
+            end
+
+
+        end
+    end
+
+for i=1:1:length(PROB(:,1))
+    V(i)=(PROB(i,:))*ParamV;
+    %if V(i)~=0 
+        V(i)=V(i)/sum(PROB(i,:));
+    %end
+end
+Result=[Result;u mean(V)]
+end
+toc

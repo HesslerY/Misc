@@ -1,0 +1,53 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%    MODE TUNING  %%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+clear all
+close all
+
+load SR360_1000MHZ_360.mat
+theta=1:360
+SR=(Amplitude_crete/mean(Amplitude_crete)).^2;
+
+critere=0 %en dBm
+
+N=20 %positions de brasseurs
+powerdB=10*log10(SR);
+
+%%% 1ère stratégie: 50 positions aléatoires
+
+posrand=sort(randi(360,50,1));
+
+
+for i=1:N;
+P(i)=powerdB(posrand(i));
+end
+
+[vmax,posmax]=max(P);
+if vmax>critere
+    disp('essai OK')
+    disp(posmax)
+else
+    disp('echec')
+end
+
+%%% 2ème stratégie 50 positions équi-réparties
+
+START=randi(360);
+for i=1:N;
+Q(i)=powerdB(mod(START+i*round((360/N)),360)+1);
+end
+
+[vmax,posmax]=max(Q);
+if vmax>critere
+    disp('essai OK')
+    disp(posmax)
+else
+    disp('echec')
+end
+
+
+
+
+
+
+

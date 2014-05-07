@@ -1,0 +1,3 @@
+calculdesreponsesxb
+calculdesreponsesyb
+calculdesreponseszb
